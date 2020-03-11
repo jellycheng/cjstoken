@@ -1,0 +1,28 @@
+{
+    "name": "cjs/token",
+    "description": "用户token、oauth access token",
+    "keywords": [],
+    "license": "MIT",
+    "homepage": "http://www.nfangbian.com",
+    "authors": [
+        {
+            "name": "jelly",
+            "email": "42282367@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "require-dev": {},
+    "autoload": {
+        "psr-4": {
+            "CjsToken\\": "src/"
+        },
+        "files": [
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {}
+    },
+    "suggest": {}
+}
