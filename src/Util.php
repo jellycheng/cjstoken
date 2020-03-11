@@ -54,4 +54,37 @@ class Util
         return $res;
     }
 
+    public static function getLimit($page, $page_size = 10) {
+        $start = ($page-1)*$page_size;
+        $limit = " limit " . $start . " ," . $page_size;
+        return $limit;
+    }
+
+    public static function parseKey($key) {
+        $key   =  trim($key);
+        if(!preg_match('/[,\'\"\*\(\)`.\s]/', $key)) {
+            $key = '`'.$key.'`';
+        }
+        return $key;
+    }
+
+
+    public static function parseValue($value){
+        $value = addslashes(stripslashes($value));//重新加斜线，防止从数据库直接读取出错
+        return "'".$value."'";
+    }
+
+    public static function getInsertSql($table, $insertData = []) {
+        $fields = [];
+        $values = [];
+        foreach($insertData as $k=>$v) {
+            $fields[] = static::parseKey($k);
+            $values[] = static::parseValue($v);
+        }
+        $sql = sprintf('INSERT INTO `%s` (%s) VALUES(%s);',
+                        $table,implode(',',$fields),implode(',',$values)
+                );
+        return $sql;
+    }
+
 }
