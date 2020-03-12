@@ -55,6 +55,9 @@ class Util
     }
 
     public static function getLimit($page, $page_size = 10) {
+        if($page<1) {
+            $page = 1;
+        }
         $start = ($page-1)*$page_size;
         $limit = " limit " . $start . " ," . $page_size;
         return $limit;
@@ -96,10 +99,24 @@ class Util
     }
 
     public static function getDbCfgKey($dbSn) {
+        if(!is_numeric($dbSn) || $dbSn>UsertokenServer::getInstance()->getDbNum() || $dbSn<1) {
+            $dbSn = 1;
+        }
+        $dbNamePrefix = UsertokenServer::getInstance()->getDbnamePart();
+        if($dbNamePrefix) {
+            return $dbNamePrefix . $dbSn;
+        }
         return 'db_user_token_' . $dbSn;
     }
 
     public static function getDbTableName($tblSn) {
+        if(!is_numeric($tblSn) || $tblSn>UsertokenServer::getInstance()->getTableNum() || $tblSn<1) {
+            $tblSn = 1;
+        }
+        $tblNamePrefix = UsertokenServer::getInstance()->getTblnamePart();
+        if($tblNamePrefix) {
+            return $tblNamePrefix . $tblSn;
+        }
         return 't_user_token_' . $tblSn;
     }
 

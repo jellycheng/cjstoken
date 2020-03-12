@@ -15,23 +15,9 @@ abstract class Usertoken
     protected $db_num = 1;  //总共分多少库数
     protected $table_num = 16;  //一个库总共分多少表数
     protected $active_time = 10 * 60 * 60; //单位秒，活动时间阀值，10分钟
-    protected $db_charset = 'utf8mb4';
-    protected $db_collation = 'utf8mb4_general_ci';
     protected $dbname_part = "db_user_token_";
     protected $tblname_part = "t_user_token_";
-    protected $redis_config = [
-                                'host'     => '127.0.0.1',
-                                'port'     => 6379,
-                                'database' => 9,
-                                'password' => '',
-                                'prefix'   => 'base_user:user:',
-                                'desc'     => '登录态专用配置'
-                            ];
 
-    protected $db_config = [
-
-
-                            ];
     const USER_TOKEN_REDIS_GROUP = 'user_token';
 
     public static function getInstance() {
@@ -56,30 +42,12 @@ abstract class Usertoken
         if(isset($config['active_time'])) {
             $this->active_time = $config['active_time'];
         }
-        if(isset($config['db_charset'])) {
-            $this->db_charset = $config['db_charset'];
-        }
-        if(isset($config['db_collation'])) {
-            $this->db_collation = $config['db_collation'];
-        }
         if(isset($config['dbname_part'])) {
             $this->dbname_part = $config['dbname_part'];
         }
         if(isset($config['tblname_part'])) {
             $this->tblname_part = $config['tblname_part'];
         }
-        if(isset($config['redis_config'])) {
-            $this->setRedisConfig($config['redis_config']);
-        }
-        return $this;
-    }
-
-    public function getRedisConfig() {
-        return $this->redis_config;
-    }
-
-    public function setRedisConfig($config = []) {
-        $this->redis_config = array_merge($this->redis_config, $config);
         return $this;
     }
 
@@ -91,6 +59,58 @@ abstract class Usertoken
     public function setActiveTime($active_time)
     {
         $this->active_time = $active_time;
+        return $this;
+    }
+
+    public function getDbNum()
+    {
+        return $this->db_num;
+    }
+
+    public function setDbNum($db_num)
+    {
+        $db_num = intval($db_num);
+        if($db_num<1) {
+            $db_num = 1;
+        }
+        $this->db_num = $db_num;
+        return $this;
+    }
+
+    public function getTableNum()
+    {
+        return $this->table_num;
+    }
+
+    public function setTableNum($table_num)
+    {
+        $table_num = intval($table_num);
+        if($table_num<1) {
+            $table_num = 1;
+        }
+        $this->table_num = $table_num;
+        return $this;
+    }
+
+    public function getDbnamePart()
+    {
+        return $this->dbname_part;
+    }
+
+    public function setDbnamePart($dbname_part)
+    {
+        $this->dbname_part = $dbname_part;
+        return $this;
+    }
+
+    public function getTblnamePart()
+    {
+        return $this->tblname_part;
+    }
+
+    public function setTblnamePart($tblname_part)
+    {
+        $this->tblname_part = $tblname_part;
         return $this;
     }
 

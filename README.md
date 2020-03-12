@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `t_user_token_1` (
   `app_platform` varchar(25) NOT NULL DEFAULT '' COMMENT '平台 p-PC i-IOS a-Android h5-H5 mp-小程序',
   `app_type` varchar(50) NOT NULL DEFAULT 'mqj' COMMENT 'APP类型',
   `out_system` varchar(255) NOT NULL DEFAULT '' COMMENT '外部系统调用生成token，可选',
-  `invalid_type` tinyint(4) NOT NULL DEFAULT '0' COMMENT '失效类型，0-未失效，1-自动失效 2-相同平台踢下线失效，3-用户主动退出',
+  `invalid_type` tinyint(4) NOT NULL DEFAULT '0' COMMENT '失效类型，0-未失效，1-自动失效 2-相同平台踢下线失效，3-用户主动退出,4-人工处理退出',
   `is_delete` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否删除 0-正常 1-删除',
   `create_time` int(10) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` int(10) NOT NULL DEFAULT '0' COMMENT '修改时间',

@@ -36,6 +36,5 @@ var_export($tokenInfo);
 $logoutToken = "66f02427dc57d9be3c92a2d178fb54f9";
 \CjsToken\UsertokenServer::getInstance()->logoutToken($logoutToken);
 
-//通过用户ID，下线所有地方的登录
 
 
