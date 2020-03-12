@@ -87,4 +87,39 @@ class Util
         return $sql;
     }
 
+    public static function getUserTokenKey($token) {
+        return sprintf("usertoken:%s", $token);
+    }
+
+    public static function getUserActiveTimeKey($userid) {
+        return sprintf("useractivet:%s", $userid);
+    }
+
+    public static function getDbCfgKey($dbSn) {
+        return 'db_user_token_' . $dbSn;
+    }
+
+    public static function getDbTableName($tblSn) {
+        return 't_user_token_' . $tblSn;
+    }
+
+    public static function getDbTblCfg4Token($token) {
+        $ret = [];
+        $tmp = explode('-', $token);
+        if(count($tmp) < 4) {
+            return $ret;
+        }
+        $tbl_sn = array_pop($tmp);
+        $db_sn = array_pop($tmp);
+        if(!is_numeric($db_sn)) {
+            $db_sn = 1;
+        }
+        if(!is_numeric($tbl_sn) || !is_numeric($db_sn)) {
+            return $ret;
+        }
+        $ret['dbcfgkey'] = self::getDbCfgKey($db_sn);
+        $ret['table_name'] = self::getDbTableName($tbl_sn);
+        return $ret;
+    }
+
 }

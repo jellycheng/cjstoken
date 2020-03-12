@@ -4,16 +4,17 @@
  * User: jelly
  * Date: 2020-03-11
  * Time: 14:37
+ * token客户端和服务端复用代码
  */
 
 namespace CjsToken;
 
-class Usertoken
+abstract class Usertoken
 {
 
     protected $db_num = 1;  //总共分多少库数
     protected $table_num = 16;  //一个库总共分多少表数
-    protected $active_time = 10 * 60 * 60; //活动时间阀值，10分钟
+    protected $active_time = 10 * 60 * 60; //单位秒，活动时间阀值，10分钟
     protected $db_charset = 'utf8mb4';
     protected $db_collation = 'utf8mb4_general_ci';
     protected $dbname_part = "db_user_token_";
@@ -26,6 +27,12 @@ class Usertoken
                                 'prefix'   => 'base_user:user:',
                                 'desc'     => '登录态专用配置'
                             ];
+
+    protected $db_config = [
+
+
+                            ];
+    const USER_TOKEN_REDIS_GROUP = 'user_token';
 
     public static function getInstance() {
         static $instance;
@@ -76,6 +83,16 @@ class Usertoken
         return $this;
     }
 
+    public function getActiveTime()
+    {
+        return $this->active_time;
+    }
+
+    public function setActiveTime($active_time)
+    {
+        $this->active_time = $active_time;
+        return $this;
+    }
 
     //通过用户id返回用户所在库号、表号
     public function getDBBaseByUserid($userid){
@@ -90,50 +107,40 @@ class Usertoken
                 ];
     }
 
-
-    public function generate4userid($userid, $ext = []) {
-        $uuid = Uuid::generate4help($userid);
-        if(empty($ext)) {
-            return $uuid;
+    //仅从redis获取token信息，没有就为空
+    public function getTokenInfo4Redis($token) {
+        static $data = [];
+        if(isset($data[$token])) {
+            return $data[$token];
         }
-        //插入db
-
-        return $uuid;
-    }
-
-    public function getTokenInfo($token) {
-
-    }
-
-    //通过token退出
-    public function logoutToken($token) {
-
-    }
-    //通过用户ID退出
-    public function logoutToken4userid($userid, $ext = []) {
-
-    }
-
-    //设置活动时间，每隔一定阀值（暂定10分钟）更新一次db
-    public function setActiveTime($token) {
-
-    }
-
-    //通过条件分页查询t_user_token_*表记录
-    public function selectUserTokenList($param = []) {
-        $dbnum = isset($param['db_sn'])?intval($param['db_sn']):1;
-        $tblnum = isset($param['tbl_sn'])?intval($param['tbl_sn']):1;
-        $where = isset($param['where'])?intval($param['where']):"";
-        if($where) {
-            $where = " where " . $where;
+        $ret = [];
+        $redisTokenInfo = \CjsRedis\Redis::get(self::USER_TOKEN_REDIS_GROUP, Util::getUserTokenKey($token));
+        if($redisTokenInfo) {
+            $ret = json_decode($redisTokenInfo, true);
+            $data[$token] = $ret;
         }
-        $page = isset($param['page'])?intval($param['page']):1; //页码
-        $page_size = isset($param['page_size'])?intval($param['page_size']):10; //每页记录数
-        $limit  = " limit ";
-        $selectSql = sprintf("select * from t_user_token_%s %s %s;",
-                            $tblnum,$where,$limit
-                            );
+        return $ret;
+    }
 
+    //返回是否达到可以更新活动时间，false否、true是
+    public function checkActiveTime($tokenInfo, $isAutoUpdateRedis = true) {
+        $ret = false;
+        $curTime = time();
+        $user_id = isset($tokenInfo['user_id'])?$tokenInfo['user_id']:0;
+        $activeTime = \CjsRedis\Redis::get(self::USER_TOKEN_REDIS_GROUP, Util::getUserActiveTimeKey($user_id));
+        if(!$activeTime) {
+            $ret = true;
+        } else {
+            $lastActiveTime = $activeTime + $this->getActiveTime();
+            if($curTime >= $lastActiveTime) {
+                $ret = true;
+            }
+        }
+
+        if($isAutoUpdateRedis && $ret) {
+            \CjsRedis\Redis::set(self::USER_TOKEN_REDIS_GROUP, Util::getUserActiveTimeKey($user_id), $curTime, 7*86400);
+        }
+        return $ret;
     }
 
 }

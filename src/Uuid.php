@@ -28,6 +28,15 @@ class Uuid
         return md5($uni);
     }
 
-
+    public static function formatUuid($uuid) {
+        if(mb_strlen($uuid)<32) {
+            return $uuid;
+        }
+        return preg_replace(
+            '~^(.{8})(.{4})(.{4})(.{4})(.{12,})$~',
+            '\1-\2-\3-\4-\5',
+            $uuid
+        );
+    }
 
 }

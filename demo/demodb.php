@@ -23,8 +23,8 @@ echo "插入ID：" . $insertid . PHP_EOL;
 
 //更新记录
 $updateSql = "update t_user_token_1 set active_time=" . $time . ",device_id='" . uniqid("", true) . "' where user_id=" . $ext['user_id'];
-$num = $userTokenPdo->exec($updateSql);
-echo "影响记录数：" . $num . PHP_EOL;
+$affectNum = $userTokenPdo->exec($updateSql);
+echo "影响记录数：" . $affectNum . PHP_EOL;
 
 //查询记录
 $selectSql = "select * from t_user_token_1 where user_id = " . $ext['user_id'];

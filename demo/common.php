@@ -20,3 +20,6 @@ if(file_exists($vendorFile)) {
     });
 
 }
+
+#设置redis配置文件
+\CjsRedis\ConfigFile::setFile(__DIR__ . '/config/redis.php');
