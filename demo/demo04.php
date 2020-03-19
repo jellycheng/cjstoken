@@ -1,4 +1,8 @@
 <?php
+/**
+ * 本文件示例仅在token service调用
+ * 遍历token表
+ */
 require_once __DIR__ . '/common.php';
 $dbConfig = include __DIR__ . '/config/db.php';
 \CjsToken\MysqlDbConfig::getInstance()->setDbConfig($dbConfig);

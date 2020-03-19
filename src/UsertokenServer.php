@@ -56,8 +56,12 @@ class UsertokenServer extends Usertoken
         $ret = [];
         $redisTokenInfo = $this->getTokenInfo4Redis($token);
         if($redisTokenInfo) {
+            $invalid_type = isset($redisTokenInfo['invalid_type'])?$redisTokenInfo['invalid_type']:0;
             $isExpire = $this->checkExpireAt($redisTokenInfo);
             if($isExpire) {//过期
+                return $ret;
+            }
+            if($invalid_type != TokenEnum::INVALID_TYPE_NORMAL) {//不是正常token
                 return $ret;
             }
             $ret = $redisTokenInfo;
@@ -68,6 +72,10 @@ class UsertokenServer extends Usertoken
             }
             $isExpire = $this->checkExpireAt($tokenInfo);
             if($isExpire) {//过期
+                return $ret;
+            }
+            $invalid_type = isset($tokenInfo['invalid_type'])?$tokenInfo['invalid_type']:0;
+            if($invalid_type != TokenEnum::INVALID_TYPE_NORMAL) {//不是正常token
                 return $ret;
             }
             $ret = $tokenInfo;
@@ -147,6 +155,13 @@ class UsertokenServer extends Usertoken
     public function logoutToken($token) {
         $flag = false;
         $time = time();
+        //查redis token info
+        $redisTokenInfo = $this->getTokenInfo4Redis($token);
+        if(!empty($redisTokenInfo)) {
+            $userid = isset($redisTokenInfo['user_id'])?$redisTokenInfo['user_id']:0;
+        } else {
+            $userid = 0;
+        }
         //软删除db
         $tmp = Util::getDbTblCfg4Token($token);
         if(empty($tmp)) {
@@ -161,6 +176,9 @@ class UsertokenServer extends Usertoken
 
         //清缓存
         \CjsRedis\Redis::DEL(self::USER_TOKEN_REDIS_GROUP, Util::getUserTokenKey($token));
+        if($userid) {
+            \CjsRedis\Redis::DEL(self::USER_TOKEN_REDIS_GROUP, Util::getUserActiveTimeKey($userid));
+        }
         $flag = true;
         return $flag;
     }
