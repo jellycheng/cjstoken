@@ -13,11 +13,8 @@ class OauthUtil
     protected $client_id;
     protected $secret;
 
-    public static function getInstance() {
-        static $instance;
-        if(!$instance) {
-            $instance = new static();
-        }
+    public static function newInstance() {
+        $instance = new static();
         return $instance;
     }
 
@@ -49,7 +46,7 @@ class OauthUtil
         return $header;
     }
 
-    public function getAuthorizationBearerFormat($token='') {
+    public function getAuthorizationBearerFormat($token) {
         $str = "Authorization: Bearer " . $token;
         return $str;
     }

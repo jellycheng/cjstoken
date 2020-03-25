@@ -22,4 +22,4 @@ $server_url = \CjsToken\Oauth\SignUtil::oauthServerUrl01($param2);
 echo $server_url . PHP_EOL;
 
 
-echo \CjsToken\Oauth\OauthUtil::getInstance()->setClientId("cid")->setSecret('sid')->getAuthorizationHeaderFormat() . PHP_EOL;
+echo \CjsToken\Oauth\OauthUtil::newInstance()->setClientId("cid")->setSecret('sid')->getAuthorizationHeaderFormat() . PHP_EOL;
