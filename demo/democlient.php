@@ -43,9 +43,12 @@ $res = \CjsToken\UsertokenClient::getInstance()
                     return $redisInfo;
                 },
                 function ($token, $redisInfo, $newRedisInfo) {
+                    //$redisInfo从redis中获取到的值
+                    //$newRedisInfo值是上一个回调方法返回的值
                     echo "满足redis时间更新回调：token=" . $token . "，token信息为：" . var_export($redisInfo, true)
                         . "newRedisInfo:" . var_export($newRedisInfo, true) . PHP_EOL;
-                    //这里请求token服务, 发起token活动时间更新，写db
+                    //这里请求token服务, 通过token值调用用户token服务接口重新获取一下token信息即可。token服务器会自动token值判断是否更新db
+                    //本方法不要抛任何异常
 
                 }
            );

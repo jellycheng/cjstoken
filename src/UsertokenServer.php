@@ -82,7 +82,7 @@ class UsertokenServer extends Usertoken
             $this->writeToken2Redis($token, $ret);
         }
         //回写db，方法自动判断是否写回db
-        $this->setActiveTime($ret);
+        $this->serverCheckActiveTime($ret);
 
         return $ret;
     }
@@ -232,8 +232,8 @@ class UsertokenServer extends Usertoken
         return $flag;
     }
 
-    //设置活动时间，每隔一定阀值（暂定10分钟）更新一次db
-    public function setActiveTime($token) {
+    //检查是否更新db：每隔一定阀值（暂定10分钟）更新一次db
+    public function serverCheckActiveTime($token) {
         if(is_array($token)) {
             $redisTokenInfo = $token;
         } else {
