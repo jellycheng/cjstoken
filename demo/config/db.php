@@ -14,10 +14,10 @@ return [
     ],
     'db_user_token_1' => [
         'driver'    => 'mysql',
-        'host'     => '10.30.60.122',
-        'database' => 'towngas_user_token_1',
+        'host'     => '',
+        'database' => '',
         'username' => 'root',
-        'password' => 'Ops1q2w@com',
+        'password' => '',
         'port'     => 3306,
         'sticky'    => true,//必须为true
         'charset'   => 'utf8mb4',
