@@ -278,7 +278,7 @@ class UsertokenServer extends Usertoken
         }
         $group = isset($param['group'])?$param['group']:"";
         if($group) {
-            $group = " group by " . $order;
+            $group = " group by " . $group;
         }
         $page = isset($param['page'])?intval($param['page']):1; //页码
         $page_size = isset($param['page_size'])?intval($param['page_size']):10; //每页记录数

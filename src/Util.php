@@ -90,6 +90,138 @@ class Util
         return $sql;
     }
 
+    public static function getUpdateSql($table, $updateData = [], $param=[]) {
+        $setFiled = '';
+        foreach($updateData as $k=>$v) {
+            if($setFiled) {
+                $setFiled .= "," . static::parseKey($k) . "=" . static::parseValue($v);
+            } else {
+                $setFiled .= static::parseKey($k) . "=" . static::parseValue($v);
+            }
+
+        }
+        if(!$setFiled) {
+            return '';
+        }
+        $where = '';
+        if(isset($param['where'])) {
+            if(is_array($param['where'])) {
+                foreach ($param['where'] as $whereK=>$whereV) {
+                    if($where) {
+                        $where .= " and " . static::parseKey($whereK) . "=" . static::parseValue($whereV);
+                    } else {
+                        $where .= static::parseKey($whereK) . "=" . static::parseValue($whereV);
+                    }
+                }
+            } else {
+                $where .= $param['where'];
+            }
+        }
+        if(!$where) {
+            $where = '1=1';
+        }
+        $limit = '';
+        if(isset($param['limit']) && is_numeric($param['limit'])) {
+            $limit = "limit " . $param['limit'];
+        }
+
+        $sql = sprintf('UPDATE `%s` set %s where %s %s;',
+                            $table,$setFiled,$where,$limit
+                        );
+        return $sql;
+    }
+
+    public static function getDeleteSql($table, $param=[]) {
+        $where = '';
+        if(isset($param['where'])) {
+            if(is_array($param['where'])) {
+                foreach ($param['where'] as $whereK=>$whereV) {
+                    if($where) {
+                        $where .= " and " . static::parseKey($whereK) . "=" . static::parseValue($whereV);
+                    } else {
+                        $where .= static::parseKey($whereK) . "=" . static::parseValue($whereV);
+                    }
+                }
+            } else {
+                $where .= $param['where'];
+            }
+        }
+        if($where) {
+            $where = 'where ' . $where;
+        } else {//为了安全不支持无条件删除
+            return '';
+        }
+        $limit = '';
+        if(isset($param['limit']) && is_numeric($param['limit'])) {
+            $limit = "limit " . $param['limit'];
+        }
+        $sql = sprintf('DELETE FROM `%s` %s %s;',
+                        $table,$where,$limit
+                    );
+        return $sql;
+    }
+
+
+    public static function getSelectSql($table, $param=[]) {
+        $selectField = '';
+        if(isset($param['field'])) {
+            if(is_array($param['field'])) {
+                foreach ($param['field'] as $fieldK=>$fieldV) {
+                    if($selectField) {
+                        $selectField .= "," . static::parseKey($fieldV);
+                    } else {
+                        $selectField .= static::parseKey($fieldV);
+                    }
+                }
+            } else {
+                $selectField = $param['field'];
+            }
+        }
+        if(!$selectField) {
+            $selectField = '*';
+        }
+        $where = '';
+        if(isset($param['where'])) {
+            if(is_array($param['where'])) {
+                foreach ($param['where'] as $whereK=>$whereV) {
+                    if($where) {
+                        $where .= " and " . static::parseKey($whereK) . "=" . static::parseValue($whereV);
+                    } else {
+                        $where .= static::parseKey($whereK) . "=" . static::parseValue($whereV);
+                    }
+                }
+            } else {
+                $where .= $param['where'];
+            }
+        }
+        if($where) {
+            $where = 'where ' . $where;
+        }
+        $limit = '';
+        if(isset($param['limit']) && is_numeric($param['limit'])) {
+            $limit = "limit " . $param['limit'];
+        }
+        $order = isset($param['order'])?$param['order']:"";
+        if($order) {
+            $order = "order by " . $order;
+        }
+        $group = isset($param['group'])?$param['group']:"";
+        if($group) {
+            $group = "group by " . $group;
+        }
+        $page = isset($param['page'])?intval($param['page']):1; //页码
+        $page_size = isset($param['page_size'])?intval($param['page_size']):10; //每页记录数
+        if(!$limit) {
+            $limit  = Util::getLimit($page, $page_size);
+        }
+        //select 字段 from 表 where条件 group by分组 order by排序 limit限制
+        $sql = sprintf('SELECT %s FROM `%s` %s %s %s %s',
+                            $selectField,$table,$where,$group,$order,$limit
+                        );
+        $sql = trim($sql) . ";";
+        return $sql;
+    }
+
     public static function getUserTokenKey($token) {
         return sprintf("usertoken:%s", $token);
     }
