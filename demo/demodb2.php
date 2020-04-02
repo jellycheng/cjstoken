@@ -113,3 +113,9 @@ $dataRes = $myPdo->get($selectSql);
 var_export($dataRes);
 
 echo PHP_EOL;
+
+//获取原生pdo对象
+$pdo=MysqlPdo::getInstance(MysqlDbConfig::getInstance()->getDbConfig('db_user_token_1'))->getPdo();
+if($pdo) {
+    var_dump($pdo);
+}

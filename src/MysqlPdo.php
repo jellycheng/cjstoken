@@ -212,4 +212,13 @@ class MysqlPdo
         return $ret;
     }
 
+    public function getPdo() {
+        $ret = '';
+        $pdo = $this->connection();
+        if(!$pdo) {
+            return $ret;
+        }
+        return $pdo;
+    }
+
 }
