@@ -17,6 +17,8 @@ abstract class Usertoken
     protected $active_time = 10 * 60 * 60; //单位秒，活动时间阀值，10分钟
     protected $dbname_part = "db_user_token_";
     protected $tblname_part = "t_user_token_";
+    protected $fix_dbname = '';//固定库名，有值则是不分库
+    protected $fix_tblname = '';//固定表名，有值则是不分表
 
     const USER_TOKEN_REDIS_GROUP = 'user_token';
 
@@ -48,6 +50,28 @@ abstract class Usertoken
         if(isset($config['tblname_part'])) {
             $this->tblname_part = $config['tblname_part'];
         }
+        return $this;
+    }
+
+    public function getFixDbname()
+    {
+        return $this->fix_dbname;
+    }
+
+    public function setFixDbname($fix_dbname)
+    {
+        $this->fix_dbname = $fix_dbname;
+        return $this;
+    }
+
+    public function getFixTblname()
+    {
+        return $this->fix_tblname;
+    }
+
+    public function setFixTblname($fix_tblname)
+    {
+        $this->fix_tblname = $fix_tblname;
         return $this;
     }
 

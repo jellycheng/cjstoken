@@ -231,6 +231,9 @@ class Util
     }
 
     public static function getDbCfgKey($dbSn) {
+        if(UsertokenServer::getInstance()->getFixDbname()) {
+            return UsertokenServer::getInstance()->getFixDbname();
+        }
         if(!is_numeric($dbSn) || $dbSn>UsertokenServer::getInstance()->getDbNum() || $dbSn<1) {
             $dbSn = 1;
         }
@@ -242,6 +245,9 @@ class Util
     }
 
     public static function getDbTableName($tblSn) {
+        if(UsertokenServer::getInstance()->getFixTblname()) {
+            return UsertokenServer::getInstance()->getFixTblname();
+        }
         if(!is_numeric($tblSn) || $tblSn>UsertokenServer::getInstance()->getTableNum() || $tblSn<1) {
             $tblSn = 1;
         }
